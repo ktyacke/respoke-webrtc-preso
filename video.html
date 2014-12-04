@@ -31,7 +31,9 @@
     <div id="localVideoSource"></div>
 
     <script type="text/javascript">
-        // App ID value from the dev portal:
+        // App ID value from the dev portal. You can play
+        // around with the supplied ID or replace it with
+        // your own.
         var appid = "b4931d40-ff2b-4c46-8487-bf955a75501d";
         var activeCall;
         var endpointId;
@@ -61,7 +63,7 @@
             activeCall = evt.call;
 
             // We only want to answer if we didn't initiate the call
-            if( activeCall.caller !== true) {
+            if(activeCall.caller !== true) {
                 activeCall.answer(callOptions);
 
                 // The hangup event indicates the call is over
