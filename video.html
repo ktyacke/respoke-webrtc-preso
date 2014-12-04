@@ -31,87 +31,87 @@
     <div id="localVideoSource"></div>
 
     <script type="text/javascript">
-    // App ID value from the dev portal:
-    var appid = "b4931d40-ff2b-4c46-8487-bf955a75501d";
-    var activeCall;
-    var endpointId;
+        // App ID value from the dev portal:
+        var appid = "b4931d40-ff2b-4c46-8487-bf955a75501d";
+        var activeCall;
+        var endpointId;
 
-    // Create the client object using the App ID 
-    var client = respoke.createClient({
-        appId: appid,
-        developmentMode: true
-    });
-
-    // "connect" event fired after successful connection to Respoke
-    client.listen('connect', function() {
-        $("#status").html("Connected to Respoke as \"" + endpointId + "\"");
-    });
-
-    // Connect to Respoke when the user clicks "connect"
-    $("#doLogin").click(function() {
-        $("#status").html("Connecting...");
-        endpointId = $("#endpoint").val();
-        client.connect({
-            endpointId: endpointId // your username is the endpoint
+        // Create the client object using the App ID 
+        var client = respoke.createClient({
+            appId: appid,
+            developmentMode: true
         });
-    });
 
-    // Kisten for incoming calls
-    client.listen('call', function(evt) {
-        activeCall = evt.call;
+        // "connect" event fired after successful connection to Respoke
+        client.listen('connect', function() {
+            $("#status").html("Connected to Respoke as \"" + endpointId + "\"");
+        });
 
-        // We only want to answer if we didn't initiate the call
-        if( activeCall.caller !== true) {
-            activeCall.answer(callOptions);
-
-            // The hangup event indicates the call is over
-            activeCall.listen('hangup', function () {
-                hangUp();
+        // Connect to Respoke when the user clicks "connect"
+        $("#doLogin").click(function() {
+            $("#status").html("Connecting...");
+            endpointId = $("#endpoint").val();
+            client.connect({
+                endpointId: endpointId // your username is the endpoint
             });
+        });
+
+        // Kisten for incoming calls
+        client.listen('call', function(evt) {
+            activeCall = evt.call;
+
+            // We only want to answer if we didn't initiate the call
+            if( activeCall.caller !== true) {
+                activeCall.answer(callOptions);
+
+                // The hangup event indicates the call is over
+                activeCall.listen('hangup', function () {
+                    hangUp();
+                });
+            }
+        });
+
+        // The options for our video call including constraints and callbacks
+        var callOptions = {
+            constraints: {audio: true, video: true},
+
+            // Your video
+            onLocalMedia: function(evt) {
+                setVideo('localVideoSource', evt.element)
+            },
+
+            // Their video
+            onConnect: function(evt) {
+                setVideo('remoteVideoSource', evt.element)
+            }
+        };
+
+        // Adds the supplied video element as a child of the supplied element
+        function setVideo(elementId, videoElement) {
+            var videoParent = document.getElementById(elementId);
+            videoParent.innerHTML = "";
+            videoParent.appendChild(videoElement);
         }
-    });
 
-    // The options for our video call including constraints and callbacks
-    var callOptions = {
-        constraints: {audio: true, video: true},
+        // Call the recipient
+        $("#doCall").click(function() {
+            var recipientId = $("#remoteId").val();
+            var recipientEndpoint = client.getEndpoint({ id: recipientId });
+            activeCall = recipientEndpoint.startVideoCall(callOptions);
+        });
 
-        // Your video
-        onLocalMedia: function(evt) {
-            setVideo('localVideoSource', evt.element)
-        },
+        // Hangup the call
+        $("#doHangUp").click(hangUp);
 
-        // Their video
-        onConnect: function(evt) {
-            setVideo('remoteVideoSource', evt.element)
+        // End the current call and clean up the DOM
+        function hangUp() {
+            activeCall.hangup();
+            activeCall = null;
+
+            // Remove the video elements
+            $("#localVideoSource").html("");
+            $("#remoteVideoSource").html("");
         }
-    };
-
-    // Adds the supplied video element as a child of the supplied element
-    function setVideo(elementId, videoElement) {
-        var videoParent = document.getElementById(elementId);
-        videoParent.innerHTML = "";
-        videoParent.appendChild(videoElement);
-    }
-
-    // Call the recipient
-    $("#doCall").click(function() {
-        var recipientId = $("#remoteId").val();
-        var recipientEndpoint = client.getEndpoint({ id: recipientId });
-        activeCall = recipientEndpoint.startVideoCall(callOptions);
-    });
-
-    // Hangup the call
-    $("#doHangUp").click(hangUp);
-
-    // End the current call and clean up the DOM
-    function hangUp() {
-        activeCall.hangup();
-        activeCall = null;
-
-        // Remove the video elements
-        $("#localVideoSource").html("");
-        $("#remoteVideoSource").html("");
-    }
     </script>
 </body>
 
