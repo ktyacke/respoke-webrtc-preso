@@ -1,6 +1,6 @@
-#Communicate All the Things!
+#Getting Started with WebRTC and Respoke
 
-Example source code from the Communicate All the Things Presentation. Keep in mind these samples have been written with simplicity in mind for the purpose of presentation and experimentation. As such, error handling and other common coding practices have been intentionlly left out. There are methods and events available to handle errors and other such cases, and more information can be found in the Respoke [docs](https://docs.respoke.io).
+Example source code from the *Getting Started with WebRTC and Respoke* Presentation. Keep in mind these samples have been written with simplicity in mind for the purpose of presentation and experimentation. As such, error handling and other common coding practices have been intentionlly left out. There are methods and events available to handle errors and other such cases, and more information can be found in the [Respoke Docs](https://docs.respoke.io).
 
 Documentation for Respoke can be found at: https://docs.respoke.io
 
