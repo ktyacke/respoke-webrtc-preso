@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<head>
+    <!-- Respoke client library -->
+    <script src="https://cdn.respoke.io/respoke.min.js"></script>
+
+    <!-- jQuery, for this example -->
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+    <!-- Some simple styles to make things perty -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <h3 id="status">Not Connected</h3>
+    <div id="login">
+        <input id="endpoint" placeholder="Username" type="text" />
+        <button id="doLogin">Connect</button>
+    </div>
+
+    <script type="text/javascript">
+        // App ID value from the dev portal. You can play
+        // around with the supplied ID or replace it with
+        // your own.
+        var appid = "b4931d40-ff2b-4c46-8487-bf955a75501d";
+        var endpointId;
+
+        // Create the client object using the App ID 
+        var client = respoke.createClient({
+            appId: appid,
+            developmentMode: true
+        });
+
+        // "connect" event fired after successful connection to Respoke
+        client.listen('connect', function() {
+            $("#status").html("Connected to Respoke as \"" + endpointId + "\"");
+        });
+
+        // Connect to Respoke when the user clicks "connect"
+        $("#doLogin").click(function() {
+            // Update the status message
+            $("#status").html("Connecting...");
+
+            // Grab our username
+            endpointId = $("#endpoint").val();  
+
+            // Connect to Respoke
+            client.connect({
+                endpointId: endpointId 
+            });
+        });
+    </script>
+</body>
+
+</html>

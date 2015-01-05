@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, Helvetica;
+    margin-left: 25px;
+}
+
+#messages {
+    height: 200px;
+    width: 400px;
+    border: 1px solid #c7c7c7;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+#textToSend {
+    width: 400px;
+    padding: 5px;
+}
+
+input, textarea, button {
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #c7c7c7;
+}
+
+textarea:focus, input:focus, button:focus {
+    outline: 0;
+}
+
+button {
+    background-color: #efefef;
+    color: #333;
+}
+
+
+video {
+    width: 300px;
+    margin-right: 20px;
+}
+
+#remoteVideoSource {
+    float: left;
+}
