@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Respoke - Screensharing Example</title>
+    <!-- Respoke client library -->
+    <!-- <script src="https://cdn.respoke.io/respoke.min.js"></script> -->
+    <script src="https://cdn.respoke.io/respoke.min.js"></script>
+
+    <!-- jQuery, note that we are loading over HTTPS from google's CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    <!-- Some simple styles to make things perty -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <!-- Chrome screensharing extension -->
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/lefkijobnhaffcfhfgpkpkpfgcdcfjbc">
+</head>
+
+<body>
+    <h3 id="status">Not Connected</h3>
+    <h4 id="sharing"></h3>
+    <div id="login">
+        <input id="endpoint" placeholder="Username" type="text" />
+        <button id="doLogin">Connect</button>
+    </div>
+    
+    <div>
+        <input id="remoteId" placeholder="User to Call" type="text" />
+        <button id="doStartScreenShare">Share Screen</button>
+        <button id="doStopScreenShare">Stop Sharing</button>
+    </div>
+
+    <!-- Video object to attach the stream to -->
+    <video id="localVideoElement"></video>
+    <video id="remoteVideoElement"></video>
+
+    <script type="text/javascript">
+    $(function() {
+
+        // App ID value from the dev portal. You can play
+        // around with the supplied ID or replace it with
+        // your own.
+        var appid = "b4931d40-ff2b-4c46-8487-bf955a75501d";
+        var activeCall;
+        var endpointId;
+
+        // Create the client object using the App ID 
+        var client = respoke.createClient({
+            appId: appid,
+            developmentMode: true,
+        });
+
+        // "connect" event fired after successful connection to Respoke
+        client.listen('connect', function() {
+            $("#status").html("Connected to Respoke as \"" + endpointId + "\"");
+        });
+
+        // Connect to Respoke when the user clicks "connect"
+        $("#doLogin").click(function() {
+            $("#status").html("Connecting...");
+            endpointId = $("#endpoint").val();
+
+            client.connect({
+                endpointId: endpointId // your username is the endpoint
+            });
+        });
+        
+        // Listen for incoming calls
+        client.listen('call', function(evt) {
+            activeCall = evt.call;
+
+            // We only want to answer if we didn't initiate the call
+            if(activeCall.caller !== true) {
+                var localVideoElement  = document.getElementById('localVideoElement');
+                var remoteVideoElement = document.getElementById('remoteVideoElement');
+
+                activeCall.answer({
+                    videoLocalElement: localVideoElement,
+                    videoRemoteElement: remoteVideoElement
+                });
+
+                // The hangup event indicates the call is over
+                activeCall.listen('hangup', function () {
+                    hangUp();
+                });
+            }
+        });
+
+        // Check if the user has the Chrome Screen Sharing Extension installed
+        $("#doStartScreenShare").click(function() {
+            if (respoke.needsChromeExtension && !respoke.hasChromeExtension) {
+                // Install the extension then start screen sharing
+                chrome.webstore.install(
+                    "https://chrome.google.com/webstore/detail/lefkijobnhaffcfhfgpkpkpfgcdcfjbc",
+                    onExtensionInstallSuccess, 
+                    onExtensionInstallFailure
+                );
+            }
+            else
+            {
+                // Extension is already installed, start screen sharing
+                startScreenShare();
+            }
+        });
+
+        function onExtensionInstallSuccess(evt) {
+            startScreenShare();
+        }
+
+        // Start sharing your screen with the specified recipient
+        function startScreenShare(){
+            var recipientId         = $("#remoteId").val();
+            var recipientEndpoint   = client.getEndpoint({ id: recipientId });
+
+            var localVideoElement   = document.getElementById('localVideoElement');
+            var remoteVideoElement  = document.getElementById('remoteVideoElement');
+
+            activeCall = recipientEndpoint.startScreenShare({
+                videoLocalElement: localVideoElement,
+                videoRemoteElement: remoteVideoElement
+            });
+
+            $("#sharing").html("Sharing your screen with \"" + recipientId + "\"");
+        }
+
+        function onExtensionInstallFailure(evt){
+            console.log("There was a problem installing the Chrome Screen Sharing Extension.", evt);
+        }
+
+        // Stop the screen share
+        $("#doStopScreenShare").click(stopScreenShare);
+
+        // Stop the screen share and clean up the DOM
+        function stopScreenShare() {
+            activeCall.hangup();
+            activeCall = null;
+
+            // Remove the video elements
+            $("#localVideoSource").html("");
+            $("#remoteVideoSource").html("");
+        }
+    });
+    </script>
+</body>
+
+</html>

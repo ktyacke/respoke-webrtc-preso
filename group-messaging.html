@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<head>
+    <!-- Respoke client library -->
+    <script src="https://cdn.respoke.io/respoke.min.js"></script>
+
+    <!-- jQuery, for this example -->
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+    <!-- Some simple styles to make things perty -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    </style>
+</head>
+
+<body>
+    <h3 id="status">Not Connected to Respoke</h3>
+    <h3 id="groupStatus">Not Connected to Group</h3>
+    <div id="login">
+        <input id="endpoint" placeholder="Username" type="text" />
+        <button id="doLogin">Connect</button>
+    </div>
+
+    <div id="messaging">
+        <ul id="messages"></ul>
+        <br />
+        <textarea id="groupMsg" placeholder="Message to Send" rows="4"></textarea>
+        <br/>
+        <button id='sendMessage'>Message Group</button>
+        <button id='leaveGroup'>Leave Group</button>
+    </div>
+
+
+    <script type="text/javascript">
+    // App ID value from the dev portal. You can play
+    // around with the supplied ID or replace it with
+    // your own.
+    var appid = "b4931d40-ff2b-4c46-8487-bf955a75501d";
+
+    // The ID that other users will identify you by (your username)
+    var endpointId;
+
+    // Reference to the Group object representing the group you join
+    var group;
+
+    // The ID of the group we want to join
+    var groupId = "groupFoo";
+
+    // Create the client object using the App ID 
+    var client = respoke.createClient({
+        appId: appid,
+        developmentMode: true
+    });
+
+    // Connect to Respoke when the user clicks "connect"
+    $("#doLogin").click(function() {
+        $("#status").html("Connecting...");
+        endpointId = $("#endpoint").val();
+
+        client.connect({
+            endpointId: endpointId // your username is the endpoint
+        });
+    });
+
+    // Leave the group
+    $("#leaveGroup").click(function() {
+        group.leave({
+            onSuccess: function(evt) {
+                $('#groupStatus').html('Left group ' + groupId);
+            }
+        });
+    });
+
+    // "connect" event fired after successful connection to Respoke
+    client.listen('connect', function() {
+        $("#status").html("Connected to Respoke as \"" + endpointId + "\"");
+
+        // Update group status message
+        $('#groupStatus').html('Joining group ' + groupId);
+
+        // Automatically join the group once connected
+        client.join({
+            id: groupId,
+            onSuccess: function(grp) {
+                $('#groupStatus').html('Joined group ' + grp.id);
+
+                // Store reference to the Group object
+                this.group = grp;
+            },
+            onMessage: function(evt) {
+                $("#messages").append(
+                    "<li>" + evt.message.message + "</li>"
+                );
+            }
+        });
+    });
+
+    // Send message
+    $("#sendMessage").click(function() {
+        // Grab the message to send
+        var groupMsg = $('#groupMsg').val();
+
+        // Send message to the entire group
+        group.sendMessage({
+            message: groupMsg
+        });
+
+        // Show yourself the message
+        $("#messages").append(
+            "<li>" + groupMsg + "</li>"
+        );
+
+        // Clear the message input
+        $("#groupMsg").val('');
+    });
+    </script>
+</body>
+
+</html>
