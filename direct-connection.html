@@ -1,0 +1,24 @@
+var remoteEndpoint = this.client.getEndpoint({
+  id: remoteEndpointId
+});
+
+remoteEndpoint.startDirectConnection();
+
+. . .
+
+client.listen("direct-connection", function(e) {
+  directConnection = e.directConnection;
+  directConnection.accept();
+
+  directConnection.listen("open", function(e) {
+    console.log("directConnection.listen#open, e);
+  });
+
+  directConnection.listen("close", function(e) {
+    console.log("directConnection.listen#close, e);
+  });
+
+  directConnection.listen("message", function(e) {
+    console.log("directConnection.listen#messsage, e);
+  });
+});
