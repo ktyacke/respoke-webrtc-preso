@@ -23,6 +23,10 @@ input, textarea, button {
     border: 1px solid #c7c7c7;
 }
 
+textarea {
+    width: 400px;
+}
+
 textarea:focus, input:focus, button:focus {
     outline: 0;
 }
