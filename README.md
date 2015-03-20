@@ -29,7 +29,7 @@ Continuing down our path to awesomeness, this sample shows just how simple it is
 ##screensharing.html
 Just like we make a video call using the [startVideoCall](https://docs.respoke.io/js-library/respoke.Endpoint.html#startVideoCall) method, we can start a screenshare using the [startScreenShare](https://docs.respoke.io/js-library/respoke.Endpoint.html#startScreenShare) of the [endpoint](https://docs.respoke.io/js-library/respoke.Endpoint.html) object.
 
-[Try screensharing example live!](http://ktyacke.github.io/respoke-webrtc-preso/screensharing.html)
+[Try screensharing example live!](https://ktyacke.github.io/respoke-webrtc-preso/screensharing.html)
 
 ##style.css
 Some basic CSS styles to make things just a bit more perty...
