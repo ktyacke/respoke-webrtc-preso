@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 
 <head>
+    <title>Respoke - Video Calling Example</title>
+    
     <!-- Respoke client library -->
     <script src="https://cdn.respoke.io/respoke.min.js"></script>
 
@@ -36,6 +38,8 @@
         // your own.
         var appid = "b4931d40-ff2b-4c46-8487-bf955a75501d";
         var activeCall;
+
+        // The ID that other users will identify you by (your username)
         var endpointId;
 
         // Create the client object using the App ID 
@@ -58,6 +62,21 @@
             });
         });
 
+        // The options for our video call including constraints and callbacks
+        var callOptions = {
+            constraints: {audio: true, video: true},
+
+            // Your video
+            onLocalMedia: function(evt) {
+                setVideo('localVideoSource', evt.element)
+            },
+
+            // Their video
+            onConnect: function(evt) {
+                setVideo('remoteVideoSource', evt.element)
+            }
+        };
+        
         // Listen for incoming calls
         client.listen('call', function(evt) {
             activeCall = evt.call;
@@ -73,28 +92,6 @@
             }
         });
 
-        // The options for our video call including constraints and callbacks
-        var callOptions = {
-            constraints: {audio: true, video: true},
-
-            // Your video
-            onLocalMedia: function(evt) {
-                setVideo('localVideoSource', evt.element)
-            },
-
-            // Their video
-            onConnect: function(evt) {
-                setVideo('remoteVideoSource', evt.element)
-            }
-        };
-
-        // Adds the supplied video element as a child of the supplied element
-        function setVideo(elementId, videoElement) {
-            var videoParent = document.getElementById(elementId);
-            videoParent.innerHTML = "";
-            videoParent.appendChild(videoElement);
-        }
-
         // Call the recipient
         $("#doCall").click(function() {
             var recipientId = $("#remoteId").val();
@@ -104,6 +101,13 @@
 
         // Hangup the call
         $("#doHangUp").click(hangUp);
+
+        // Adds the supplied video element as a child of the supplied element
+        function setVideo(elementId, videoElement) {
+            var videoParent = document.getElementById(elementId);
+            videoParent.innerHTML = "";
+            videoParent.appendChild(videoElement);
+        }
 
         // End the current call and clean up the DOM
         function hangUp() {
