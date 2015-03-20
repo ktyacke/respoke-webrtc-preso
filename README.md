@@ -3,6 +3,7 @@
 Example source code from the *Getting Started with WebRTC and Respoke* Presentation. Keep in mind these samples have been written with simplicity in mind for the purpose of presentation and experimentation. As such, error handling and other common coding practices have been intentionlly left out. There are methods and events available to handle errors and other such cases, and more information can be found in the [Respoke Docs](https://docs.respoke.io).
 
 Documentation for Respoke can be found at: https://docs.respoke.io
+
 A copy of the presentation can be found at: http://ktyacke.github.io/respoke-webrtc-preso/webrtc-respoke.pdf
 
 
