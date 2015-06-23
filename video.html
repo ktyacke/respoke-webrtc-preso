@@ -51,6 +51,7 @@
         // "connect" event fired after successful connection to Respoke
         client.listen('connect', function() {
             $("#status").html("Connected to Respoke as \"" + endpointId + "\"");
+            console.log("Client: ", client);
         });
 
         // Connect to Respoke when the user clicks "connect"
