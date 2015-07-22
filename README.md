@@ -21,6 +21,11 @@ We already learned how to send messages to a single user in the messaging demo, 
 
 [Try group messaging example live!](http://ktyacke.github.io/respoke-webrtc-preso/group-messaging.html)
 
+##audio.html
+Messaging is great, but sometimes voice is just better. In this example we'll look at how to make an Audio call using the [startAudioCall](https://docs.respoke.io/js-library/respoke.Endpoint.html#startAudioCall) method of the Respoke [Client](https://docs.respoke.io/js-library/respoke.Client.html) object.
+
+[Try video example live!](http://ktyacke.github.io/respoke-webrtc-preso/audio.html)
+
 ##video.html
 Continuing down our path to awesomeness, this sample shows just how simple it is to establish an Audio and Video call using Respoke! Building upon the connection code from connect.html, we add a few `<div>` tags to house the video elements that get returned by Respoke, and use the [startVideoCall](https://docs.respoke.io/js-library/respoke.Endpoint.html#startVideoCall) method of the [endpoint](https://docs.respoke.io/js-library/respoke.Endpoint.html) object.
 
