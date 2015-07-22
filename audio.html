@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Respoke - Audio Calling Example</title>
+    
+    <!-- Respoke client library -->
+    <script src="https://cdn.respoke.io/respoke.min.js"></script>
+
+    <!-- jQuery, for this example -->
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+    <!-- Some simple styles to make things perty -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <h3 id="status">Not Connected</h3>
+    <div id="login">
+        <input id="endpoint" placeholder="Username" type="text" />
+        <button id="doLogin">Connect</button>
+    </div>
+    
+    <div>
+        <input id="remoteId" placeholder="User to Call" type="text" />
+        <button id="doCall">Call</button>
+        <button id="doHangUp">Hang Up</button>
+    </div>
+
+    <script type="text/javascript">
+        // App ID value from the dev portal. You can play
+        // around with the supplied ID or replace it with
+        // your own.
+        var appid = "b4931d40-ff2b-4c46-8487-bf955a75501d";
+        var activeCall;
+
+        // The ID that other users will identify you by (your username)
+        var endpointId;
+
+        // Create the client object using the App ID 
+        var client = respoke.createClient({
+            appId: appid,
+            developmentMode: true
+        });
+
+        // "connect" event fired after successful connection to Respoke
+        client.listen('connect', function() {
+            $("#status").html("Connected to Respoke as \"" + endpointId + "\"");
+            console.log("Client: ", client);
+        });
+
+        // Connect to Respoke when the user clicks "connect"
+        $("#doLogin").click(function() {
+            $("#status").html("Connecting...");
+            endpointId = $("#endpoint").val();
+            client.connect({
+                endpointId: endpointId // your username is the endpoint
+            });
+        });
+        
+        // Listen for incoming calls
+        client.listen('call', function(evt) {
+            activeCall = evt.call;
+
+            // We only want to answer if we didn't initiate the call
+            if(activeCall.caller !== true) {
+                activeCall.answer();
+
+                // The hangup event indicates the call is over
+                activeCall.listen('hangup', function () {
+                    hangUp();
+                });
+            }
+        });
+
+        // Call the recipient
+        $("#doCall").click(function() {
+            var recipientId = $("#remoteId").val();
+
+            client.startAudioCall({
+                endpointId: recipientId,
+
+                onConnect: function (evt) {
+                    // Your Audio
+                    // evt.element contains <video> element with audio stream
+                },
+
+                onLocalMedia: function (evt) {
+                    // The Recipients Audio
+                    // evt.element contains <video> element with audio stream
+                }
+            });
+        });
+
+        // Hangup the call
+        $("#doHangUp").click(hangUp);
+
+        // End the current call and clean up the DOM
+        function hangUp() {
+            if( activeCall ){
+                activeCall.hangup();
+                activeCall = null;
+            }
+        }
+    </script>
+</body>
+
+</html>
