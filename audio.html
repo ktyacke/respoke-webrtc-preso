@@ -63,6 +63,8 @@
 
             // We only want to answer if we didn't initiate the call
             if(activeCall.caller !== true) {
+
+                // Answer the call
                 activeCall.answer();
 
                 // The hangup event indicates the call is over
@@ -94,7 +96,7 @@
         // Hangup the call
         $("#doHangUp").click(hangUp);
 
-        // End the current call and clean up the DOM
+        // End the current call
         function hangUp() {
             if( activeCall ){
                 activeCall.hangup();
